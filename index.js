@@ -29,17 +29,20 @@ app.get('/subs', async (req, res) => {
         const userData = await userRes.json();
         const broadcasterId = userData.data[0].id;
 
-        const subRes = await fetch(`https://api.twitch.tv/helix/subscriptions?broadcaster_id=${broadcasterId}`, {
+        let subRes = await fetch(`https://api.twitch.tv/helix/subscriptions?broadcaster_id=${broadcasterId}`, {
             headers: { 'Authorization': `Bearer ${ACCESS_TOKEN}`, 'Client-Id': CLIENT_ID }
         });
 
         if (subRes.status === 401) {
             await refreshAccessToken();
-            return res.redirect('/subs');
+            subRes = await fetch(`https://api.twitch.tv/helix/subscriptions?broadcaster_id=${broadcasterId}`, {
+                headers: { 'Authorization': `Bearer ${ACCESS_TOKEN}`, 'Client-Id': CLIENT_ID }
+            });
         }
 
         const subData = await subRes.json();
-        res.json({ count: subData.total - 1 });
+        console.log('subData:', JSON.stringify(subData));
+        res.json({ count: (subData.total || 1) - 1 });
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
