@@ -45,7 +45,7 @@ app.get('/subs', async (req, res) => {
 
         const subData = await subRes.json();
         console.log('subData:', JSON.stringify(subData));
-        res.json({ count: (subData.total || 1) - 1 });
+        res.json({ count: subData.total, raw: subData });
     } catch (e) {
         console.log('error:', e.message);
         res.status(500).json({ error: e.message });
