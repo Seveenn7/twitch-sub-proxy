@@ -14,6 +14,7 @@ async function refreshAccessToken() {
         body: `grant_type=refresh_token&refresh_token=${REFRESH_TOKEN}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`
     });
     const data = await res.json();
+    console.log('refresh result:', JSON.stringify(data));
     if (data.access_token) {
         ACCESS_TOKEN = data.access_token;
         REFRESH_TOKEN = data.refresh_token;
@@ -22,11 +23,13 @@ async function refreshAccessToken() {
 
 app.get('/subs', async (req, res) => {
     res.header('Access-Control-Allow-Origin', '*');
+    res.header('Cache-Control', 'no-cache');
     try {
         const userRes = await fetch('https://api.twitch.tv/helix/users?login=sevenncorp', {
             headers: { 'Authorization': `Bearer ${ACCESS_TOKEN}`, 'Client-Id': CLIENT_ID }
         });
         const userData = await userRes.json();
+        console.log('userData:', JSON.stringify(userData));
         const broadcasterId = userData.data[0].id;
 
         let subRes = await fetch(`https://api.twitch.tv/helix/subscriptions?broadcaster_id=${broadcasterId}`, {
@@ -44,6 +47,7 @@ app.get('/subs', async (req, res) => {
         console.log('subData:', JSON.stringify(subData));
         res.json({ count: (subData.total || 1) - 1 });
     } catch (e) {
+        console.log('error:', e.message);
         res.status(500).json({ error: e.message });
     }
 });
