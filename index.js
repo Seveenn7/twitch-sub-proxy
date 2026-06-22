@@ -6,6 +6,7 @@ const CLIENT_ID = '0bozrbw6s8sb3bd0w1fx0x22hl4tsq';
 const CLIENT_SECRET = '1gkhsmc22zkjaeovl4hno0urfhb6x9';
 let REFRESH_TOKEN = 'w2orkcxefzn2dmt6ozpvqk7aybmehq4uh48oq6v6ekpuzycqt6';
 let ACCESS_TOKEN = 'blgxb8yek3tjojz34z7dml442pfa4p';
+const BROADCASTER_ID = '999175722';
 
 async function refreshAccessToken() {
     const res = await fetch('https://id.twitch.tv/oauth2/token', {
@@ -17,27 +18,16 @@ async function refreshAccessToken() {
     if (data.access_token) {
         ACCESS_TOKEN = data.access_token;
         REFRESH_TOKEN = data.refresh_token;
-        console.log('Token rafraichi avec succes');
     }
 }
 
-// Rafraichit le token toutes les 3 heures automatiquement
 setInterval(refreshAccessToken, 3 * 60 * 60 * 1000);
 
 app.get('/subs', async (req, res) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Cache-Control', 'no-store');
     try {
-        const userRes = await fetch('https://api.twitch.tv/helix/users?login=sevenncorp', {
-            headers: {
-                'Authorization': 'Bearer ' + ACCESS_TOKEN,
-                'Client-Id': CLIENT_ID
-            }
-        });
-        const userData = await userRes.json();
-        const broadcasterId = userData.data[0].id;
-
-        let subRes = await fetch('https://api.twitch.tv/helix/subscriptions?broadcaster_id=' + broadcasterId, {
+        let subRes = await fetch('https://api.twitch.tv/helix/subscriptions?broadcaster_id=' + BROADCASTER_ID, {
             headers: {
                 'Authorization': 'Bearer ' + ACCESS_TOKEN,
                 'Client-Id': CLIENT_ID
@@ -46,7 +36,7 @@ app.get('/subs', async (req, res) => {
 
         if (subRes.status === 401) {
             await refreshAccessToken();
-            subRes = await fetch('https://api.twitch.tv/helix/subscriptions?broadcaster_id=' + broadcasterId, {
+            subRes = await fetch('https://api.twitch.tv/helix/subscriptions?broadcaster_id=' + BROADCASTER_ID, {
                 headers: {
                     'Authorization': 'Bearer ' + ACCESS_TOKEN,
                     'Client-Id': CLIENT_ID
