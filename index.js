@@ -5,7 +5,7 @@ const app = express();
 const CLIENT_ID = '0bozrbw6s8sb3bd0w1fx0x22hl4tsq';
 const CLIENT_SECRET = '1gkhsmc22zkjaeovl4hno0urfhb6x9';
 let REFRESH_TOKEN = 'w2orkcxefzn2dmt6ozpvqk7aybmehq4uh48oq6v6ekpuzycqt6';
-let ACCESS_TOKEN = 'au4rcj1frtn5ttqbt2au1wmkw8b3sv';
+let ACCESS_TOKEN = 'blgxb8yek3tjojz34z7dml442pfa4p';
 
 async function refreshAccessToken() {
     const res = await fetch('https://id.twitch.tv/oauth2/token', {
